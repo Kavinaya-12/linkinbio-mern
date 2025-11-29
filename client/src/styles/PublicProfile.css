@@ -1,0 +1,99 @@
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px); /* Adjust for Navbar height */
+  background-color: var(--color-background-light-gray);
+  padding: 20px;
+}
+
+.profile-card {
+  background-color: var(--color-white);
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  border: 1px solid var(--color-accent-silver);
+  animation: fadeIn 0.8s ease-out; /* Simple fade-in animation */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 25px;
+  border: 4px solid var(--color-secondary-vibrant-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-username {
+  color: var(--color-primary-dark-charcoal);
+  font-size: 2.2em;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.profile-bio {
+  color: var(--color-text-subtle-asbestos);
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  line-height: 1.7;
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.profile-link {
+  display: block; 
+  background-color: var(--color-secondary-vibrant-blue);
+  color: var(--color-white);
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-link:hover {
+  background-color: var(--color-blue-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.profile-container p { 
+  color: var(--color-text-subtle-asbestos);
+  font-size: 1.1em;
+  text-align: center;
+  margin-top: 50px;
+}
+
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 30px 20px;
+  }
+  .profile-username {
+    font-size: 1.8em;
+  }
+  .profile-bio, .profile-link {
+    font-size: 1em;
+  }
+}
+
+p{
+color: "#f1f5f9"; 
+text-align:"center"; 
+}

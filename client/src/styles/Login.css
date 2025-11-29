@@ -1,0 +1,45 @@
+
+.login-page, .signup-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px); 
+  background-color: var(--color-background-light-gray);
+  padding: 20px;
+}
+
+.login-box, .signup-box {
+  background-color: var(--color-white);
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid var(--color-accent-silver); 
+}
+
+.login-box h2, .signup-box h2 {
+  color: var(--color-primary-dark-charcoal);
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.login-box form, .signup-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-box button, .signup-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.login-box p, .signup-box p {
+  margin-top: 20px;
+  font-size: 0.95em;
+  color: var(--color-text-subtle-asbestos);
+}

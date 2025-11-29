@@ -1,0 +1,201 @@
+/* global.css */
+
+/* --- Color Variables --- */
+:root {
+  --color-primary-dark-charcoal: #2C3E50;
+  --color-secondary-vibrant-blue: #3498DB;
+  --color-background-light-gray: #ECF0F1;
+  --color-accent-silver: #BDC3C7;
+  --color-text-subtle-asbestos: #7F8C8D;
+  --color-white: #FFFFFF;
+  --color-blue-hover: #2980B9; /* A slightly darker blue for hover states */
+}
+
+/* --- Font Theme --- */
+/* Using Google Fonts for a modern, clean look.
+   You'll need to import these in your public/index.html or directly in your CSS. */
+/* Example: @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap'); */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif; /* A modern, clean sans-serif font */
+  background-color: var(--color-background-light-gray);
+  color: var(--color-primary-dark-charcoal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Base Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary-dark-charcoal);
+  font-family: 'Montserrat', sans-serif; /* A slightly more prominent font for headings */
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+
+h1 { font-size: 2.5em; }
+h2 { font-size: 2em; }
+h3 { font-size: 1.75em; }
+h4 { font-size: 1.5em; }
+h5 { font-size: 1.25em; }
+h6 { font-size: 1em; }
+
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+  color: var(--color-primary-dark-charcoal);
+}
+
+a {
+  color: var(--color-secondary-vibrant-blue);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-blue-hover);
+  text-decoration: underline;
+}
+
+/* --- General Form Elements --- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 1px solid var(--color-accent-silver);
+  border-radius: 6px;
+  font-size: 1em;
+  font-family: 'Inter', sans-serif;
+  color: var(--color-primary-dark-charcoal);
+  background-color: var(--color-white);
+  box-sizing: border-box; 
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="url"]::placeholder,
+textarea::placeholder {
+  color: var(--color-text-subtle-asbestos);
+  opacity: 0.7;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+  border-color: var(--color-secondary-vibrant-blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); /* Soft focus ring */
+}
+
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
+}
+
+
+.primary-btn,
+.cta-button,
+.save-btn,
+.add-btn {
+  background-color: var(--color-secondary-vibrant-blue);
+  color: var(--color-white);
+}
+
+.primary-btn:hover,
+.cta-button:hover,
+.save-btn:hover,
+.add-btn:hover {
+  background-color: var(--color-blue-hover);
+}
+
+
+.secondary-btn {
+  background-color: var(--color-white);
+  color: var(--color-primary-dark-charcoal);
+  border: 1px solid var(--color-accent-silver);
+}
+
+.secondary-btn:hover {
+  background-color: var(--color-background-light-gray);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--color-accent-silver);
+  color: var(--color-text-subtle-asbestos);
+  padding: 8px 15px;
+  font-size: 0.9em;
+  border-radius: 5px;
+}
+
+.icon-btn:hover {
+  background-color: var(--color-accent-silver);
+  color: var(--color-primary-dark-charcoal);
+}
+
+.logout-btn { 
+  background: none;
+  border: none;
+  color: var(--color-text-subtle-asbestos);
+  font-weight: 500;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+.logout-btn:hover {
+  color: var(--color-secondary-vibrant-blue);
+}
+
+/* --- Utility Classes --- */
+.text-subtle {
+  color: var(--color-text-subtle-asbestos);
+  font-size: 0.9em;
+}
+
+.message-success {
+  color: green;
+  font-weight: 500;
+  margin-top: 15px;
+}
+
+.message-error {
+  color: red;
+  font-weight: 500;
+  margin-top: 15px;
+}
+
+.Toastify__toast-container {
+  font-family: 'Inter', sans-serif;
+}
+.Toastify__toast--success {
+  background-color: var(--color-secondary-vibrant-blue);
+  color: var(--color-white);
+}
+.Toastify__toast--error {
+  background-color: var(--color-primary-dark-charcoal);
+  color: var(--color-white);
+}
