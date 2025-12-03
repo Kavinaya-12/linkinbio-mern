@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const cloudinary = require("../utils/cloudinary");
+
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
@@ -27,6 +29,7 @@ exports.getPublicProfile = async (req, res) => {
   }
 };
 
+
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.userId;
@@ -36,8 +39,22 @@ exports.updateProfile = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (username !== undefined) user.username = username.trim();
+
     if (bio !== undefined) user.bio = bio.trim();
-    if (avatarUrl !== undefined) user.avatarUrl = avatarUrl.trim();
+
+    let finalAvatarUrl = avatarUrl;
+
+    if (avatarUrl && avatarUrl.startsWith("data:image")) {
+      const uploadResponse = await cloudinary.uploader.upload(avatarUrl, {
+        folder: "linkinbio_avatars",
+      });
+
+      finalAvatarUrl = uploadResponse.secure_url; 
+    }
+
+    if (avatarUrl !== undefined) {
+      user.avatarUrl = finalAvatarUrl;
+    }
 
     if (Array.isArray(links)) {
       const validLinks = links.filter((link) => {
@@ -45,7 +62,6 @@ exports.updateProfile = async (req, res) => {
           if (!link.title || !link.title.trim()) return false;
           const parsed = new URL(link.url);
           if (parsed.protocol !== "https:") return false;
-          if (!parsed.hostname || parsed.hostname.length < 3) return false;
           return true;
         } catch {
           return false;
@@ -57,7 +73,7 @@ exports.updateProfile = async (req, res) => {
 
     await user.save();
 
-       const updatedUser = await User.findById(userId).select("-password");
+    const updatedUser = await User.findById(userId).select("-password");
     res.status(200).json({
       message: "Profile updated successfully",
       user: updatedUser,

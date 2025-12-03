@@ -10,7 +10,7 @@ function PublicProfile() {
     async function fetchUser() {
       try {
         // const res = await fetch(`http://localhost:5000/api/user/profile/${username}`);
-const res = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${username}`);
+const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${username}`);
 
         const data = await res.json();
         if (res.ok) setUser(data);

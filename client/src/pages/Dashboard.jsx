@@ -21,12 +21,11 @@ function Dashboard() {
   const [isNewUser, setIsNewUser] = useState(false); // ✅ new state
 
   useEffect(() => {
+      console.log("API URL:", import.meta.env.VITE_API_URL);  // <-- paste here
     async function fetchUser() {
       const token = localStorage.getItem("token");
-      // const res = await fetch("http://localhost:5000/api/user/me", {
-      //   headers: { Authorization: `Bearer ${token}` },
-      // });
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/user/me`, {
+     
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
   headers: { Authorization: `Bearer ${token}` },
 });
 
@@ -94,15 +93,18 @@ function Dashboard() {
     const updatedLinks = links.filter((_, i) => i !== index);
     setLinks(updatedLinks);
   };
+const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setUploadPreview(previewURL);
-      setAvatarUrl("");
-    }
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setAvatarUrl(reader.result);  
+    setUploadPreview(reader.result);
   };
+  reader.readAsDataURL(file);
+};
+
 
   const allValidated = links.length > 0 && links.every((l) => l.validated);
 
@@ -115,7 +117,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     const payload = { username, bio, avatarUrl: avatarUrl || uploadPreview, links };
 
-const res = await fetch(`${process.env.REACT_APP_API_URL}/api/user/me`, {
+const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -155,7 +157,7 @@ const res = await fetch(`${process.env.REACT_APP_API_URL}/api/user/me`, {
           <h3>
             <a
               // href={`http://localhost:5173/u/${username}`}
-href={`https://linkinbio-mern-3h5jls7ts-kavinayas-projects.vercel.app/${username}`}
+href={`https://linkinbio-mern.vercel.app/${username}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "var(--color-secondary-vibrant-blue)", textDecoration: "none" }}

@@ -3,23 +3,24 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/user");
-
 const app = express();
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://linkinbio-mern-3h5jls7ts-kavinayas-projects.vercel.app"
+      "https://linkinbio-mern.vercel.app"   
     ],
     credentials: true,
   })
 );
 
-app.use(express.json());
 
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
