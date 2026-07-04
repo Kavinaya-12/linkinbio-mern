@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/Welcome.css";
 
 function Welcome() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const { token } = useAuth();
 
   useEffect(() => {
     if (token) {
@@ -28,7 +29,7 @@ function Welcome() {
       </div>
       <div className="welcome-right">
         <img
-          src="../../public/girl-avatar.png" 
+          src="/girl-avatar.png"
           alt="Illustration"
           className="avatar-illustration"
         />

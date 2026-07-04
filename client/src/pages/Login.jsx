@@ -1,57 +1,44 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import request from "../lib/api";
+import FormCard from "../components/FormCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "../styles/Login.css";
 
 function Login() {
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData),
-});
+    setIsSubmitting(true);
+    setMessage("");
 
-    
-    const data = await res.json();
-    if (res.ok) {
+    try {
+      const data = await request("/api/auth/login", { method: "POST", body: formData, auth: false });
       login(data.token);
-      setMessage("Login successful ");
-    } else {
-      setMessage(data.message || "Login failed ");
+      setMessage("Login successful");
+    } catch (error) {
+      setMessage(error.message || "Login failed");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="login-page">
-      <div className="login-box">
-        <h2>Welcome Back </h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        <p>{message}</p>
-      </div>
-    </div>
+    <FormCard title="Welcome Back" subtitle="Sign in to continue managing your profile." footer={<p className="auth-footer-link">New here? <a href="/signup">Create an account</a></p>}>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+        <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+        <button type="submit" disabled={isSubmitting}>{isSubmitting ? <LoadingSpinner label="Signing in..." /> : "Login"}</button>
+      </form>
+      {message ? <p className="auth-message">{message}</p> : null}
+    </FormCard>
   );
 }
 

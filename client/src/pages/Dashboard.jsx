@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import React, { useState, useEffect, useMemo } from "react";
 import "../styles/Dashboard.css";
 import { toast } from "react-toastify";
 import { FaPlus, FaSave, FaLink, FaUserEdit, FaTrash } from "react-icons/fa";
+import request from "../lib/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function Dashboard() {
   const defaultLinks = [
@@ -18,22 +19,16 @@ function Dashboard() {
   const [uploadPreview, setUploadPreview] = useState("");
   const [links, setLinks] = useState(defaultLinks);
   const [isEditing, setIsEditing] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false); // ✅ new state
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-      console.log("API URL:", import.meta.env.VITE_API_URL);  // <-- paste here
     async function fetchUser() {
-      const token = localStorage.getItem("token");
-     
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
-
-      const data = await res.json();
-
-      if (res.ok) {
-        const hasProfile =
-          data.username || data.bio || (data.links && data.links.length > 0);
+      try {
+        const data = await request("/api/user/me");
+        const hasProfile = data.username || data.bio || (data.links && data.links.length > 0);
 
         if (!hasProfile) {
           setIsNewUser(true);
@@ -53,6 +48,10 @@ function Dashboard() {
         } else {
           setLinks(defaultLinks);
         }
+      } catch (err) {
+        setError(err.message || "Unable to load your profile");
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchUser();
@@ -106,7 +105,7 @@ const handleImageUpload = (e) => {
 };
 
 
-  const allValidated = links.length > 0 && links.every((l) => l.validated);
+  const allValidated = useMemo(() => links.length > 0 && links.every((l) => l.validated), [links]);
 
   const handleSave = async () => {
     if (!allValidated) {
@@ -114,27 +113,30 @@ const handleImageUpload = (e) => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    const payload = { username, bio, avatarUrl: avatarUrl || uploadPreview, links };
+    setIsSaving(true);
+    setError("");
 
-const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
+    try {
+      const payload = { username, bio, avatarUrl: avatarUrl || uploadPreview, links };
+      await request("/api/user/me", { method: "PUT", body: payload });
       toast.success("Profile saved successfully!");
       setIsEditing(false);
-      setIsNewUser(false); 
-    } else {
-      toast.error(data.message || "Failed to save profile");
+      setIsNewUser(false);
+    } catch (err) {
+      setError(err.message || "Failed to save profile");
+      toast.error(err.message || "Failed to save profile");
+    } finally {
+      setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="dashboard-container">
+        <LoadingSpinner label="Loading your profile..." />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -151,16 +153,17 @@ const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
         )}
       </div>
 
+      {error ? <p className="form-error">{error}</p> : null}
+
       {!isEditing ? (
         <div className="profile-preview">
           {avatarUrl && <img src={avatarUrl} alt="avatar" className="avatar-preview" />}
           <h3>
             <a
-              // href={`http://localhost:5173/u/${username}`}
-href={`https://linkinbio-mern.vercel.app/${username}`}
+              href={`https://linkinbio-mern.vercel.app/${username}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "var(--color-secondary-vibrant-blue)", textDecoration: "none" }}
+              className="profile-preview-link"
             >
               @{username}
             </a>
@@ -172,13 +175,13 @@ href={`https://linkinbio-mern.vercel.app/${username}`}
             <ul>
               {links.map((link, i) =>
                 link.url ? (
-                  <li key={i} style={{ display: "flex", gap: "10px", fontSize: "1.05em" }}>
+                  <li key={i} className="profile-preview-link-item">
                     <strong>{link.title || "Link"}:</strong>
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: "var(--color-secondary-vibrant-blue)" }}
+                      className="profile-preview-link-anchor"
                     >
                       {link.url}
                     </a>
@@ -269,13 +272,9 @@ href={`https://linkinbio-mern.vercel.app/${username}`}
           <button
             className="save-btn"
             onClick={handleSave}
-            disabled={!allValidated}
-            style={{
-              opacity: allValidated ? 1 : 0.6,
-              cursor: allValidated ? "pointer" : "not-allowed",
-            }}
+            disabled={!allValidated || isSaving}
           >
-            <FaSave /> {isNewUser ? "Save Profile" : "Submit"}
+            {isSaving ? <LoadingSpinner label="Saving..." /> : <><FaSave /> {isNewUser ? "Save Profile" : "Submit"}</>}
           </button>
         </>
       )}

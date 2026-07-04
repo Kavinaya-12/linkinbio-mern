@@ -9,7 +9,6 @@ const auth = require("../middleware/authMiddleware");
 
 router.get("/me", auth, getCurrentUser);
 router.put("/me", auth, updateProfile);
-
 router.get("/:username", getPublicProfile);
 
 module.exports = router;

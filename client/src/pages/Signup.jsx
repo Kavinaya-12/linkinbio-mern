@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import request from "../lib/api";
+import FormCard from "../components/FormCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "../styles/Signup.css";
 
 function Signup() {
@@ -10,57 +13,37 @@ function Signup() {
     username: ""
   });
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData),
-});
+    setIsSubmitting(true);
+    setMessage("");
 
-    const data = await res.json();
-    if (res.ok) {
+    try {
+      const data = await request("/api/auth/signup", { method: "POST", body: formData, auth: false });
       login(data.token);
-      setMessage("Signup successful ");
-    } else {
-      setMessage(data.message || "Signup failed ");
+      setMessage("Signup successful");
+    } catch (error) {
+      setMessage(error.message || "Signup failed");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="signup-page">
-      <div className="signup-box">
-        <h2>Create Account</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
-          <button type="submit">Signup</button>
-        </form>
-        <p>{message}</p>
-      </div>
-    </div>
+    <FormCard title="Create Account" subtitle="Set up your public profile in minutes." footer={<p className="auth-footer-link">Already have an account? <a href="/login">Log in</a></p>}>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <input name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
+        <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+        <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+        <button type="submit" disabled={isSubmitting}>{isSubmitting ? <LoadingSpinner label="Creating account..." /> : "Signup"}</button>
+      </form>
+      {message ? <p className="auth-message">{message}</p> : null}
+    </FormCard>
   );
 }
 

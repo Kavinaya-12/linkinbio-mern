@@ -2,15 +2,25 @@ const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) return res.status(401).json({ message: "Unauthorized" });
+  if (!authHeader) {
+    return next({ statusCode: 401, message: "Authorization header is required" });
+  }
 
-  const token = authHeader.split(" ")[1];
+  const [scheme, token] = authHeader.split(" ");
+  if (scheme !== "Bearer" || !token) {
+    return next({ statusCode: 401, message: "Authorization header must use Bearer scheme" });
+  }
+
+  if (!process.env.JWT_SECRET) {
+    return next({ statusCode: 500, message: "JWT_SECRET is not configured" });
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.id;
-    next();
+    return next();
   } catch (err) {
-    res.status(403).json({ message: "Invalid or expired token" });
+    return next({ statusCode: 401, message: "Invalid or expired token" });
   }
 };
 

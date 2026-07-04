@@ -1,29 +1,46 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/PublicProfile.css";
+import request from "../lib/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function PublicProfile() {
   const { username } = useParams();
   const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
       try {
-        // const res = await fetch(`http://localhost:5000/api/user/profile/${username}`);
-const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${username}`);
-
-        const data = await res.json();
-        if (res.ok) setUser(data);
+        const data = await request(`/api/user/${username}`, { auth: false });
+        setUser(data);
       } catch (err) {
-        console.error("Failed to load user:", err);
+        setError(err.message || "Failed to load user");
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchUser();
   }, [username]);
 
-  if (!user) return
-   <p style={{ color: "#f1f5f9", textAlign: "center" }}>Loading profile...
-   </p>;
+  if (isLoading) {
+    return (
+      <div className="profile-container">
+        <LoadingSpinner label="Loading profile..." />
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="profile-container">
+        <div className="profile-card">
+          <p>{error || "Profile not found"}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -35,7 +52,7 @@ const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${username}`);
         <p className="profile-bio">{user.bio}</p>
 
         <div className="link-list">
-          {user.links.map((link, idx) => (
+          {user.links?.map((link, idx) => (
             <a
               key={idx}
               href={link.url.startsWith("http") ? link.url : `https://${link.url}`}

@@ -1,5 +1,5 @@
 
-.login-page, .signup-page {
+.auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,7 +8,7 @@
   padding: 20px;
 }
 
-.login-box, .signup-box {
+.auth-card {
   background-color: var(--color-white);
   padding: 40px 30px;
   border-radius: 10px;
@@ -19,27 +19,40 @@
   border: 1px solid var(--color-accent-silver); 
 }
 
-.login-box h2, .signup-box h2 {
+.auth-card h2 {
   color: var(--color-primary-dark-charcoal);
   margin-bottom: 30px;
   font-size: 2em;
   font-weight: 600;
 }
 
-.login-box form, .signup-box form {
+.auth-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.login-box button, .signup-box button {
+.auth-form button {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
 }
 
-.login-box p, .signup-box p {
+.auth-message {
   margin-top: 20px;
   font-size: 0.95em;
+  color: var(--color-text-subtle-asbestos);
+}
+
+.auth-subtitle {
+  color: var(--color-text-subtle-asbestos);
+  margin-bottom: 20px;
+}
+
+.auth-footer {
+  margin-top: 15px;
+}
+
+.auth-footer-link {
   color: var(--color-text-subtle-asbestos);
 }
