@@ -1,45 +1,29 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import PublicProfile from "./pages/PublicProfile";
-import CheckAuth from "./components/CheckAuth";
-import Welcome from "./pages/Welcome";
-import './styles/global.css';
-import {ToastContainer} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import Welcome from "./pages/Welcome";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 import AboutUs from "./pages/AboutUs";
-import Contact from "./pages/Contact";
+import PublicProfile from "./pages/PublicProfile";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <Router>
-      <Navbar/>
+    <BrowserRouter>
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Welcome/>}/>
-        <Route path="/signup" element={<CheckAuth><Signup /></CheckAuth>} />
-        <Route path="/login" element={<CheckAuth><Login /></CheckAuth>} />
-      <Route path="/dashboard" element={<CheckAuth><Dashboard /></CheckAuth>} />
-<Route path="/:username" element={<PublicProfile />} />
-<Route path="/about" element={<AboutUs/>}/>
-<Route path="/contact" element={<Contact/>}/>       
+        <Route path="/" element={<Welcome />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/:username" element={<PublicProfile />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="colored"
-        />
-    </Router>
+    </BrowserRouter>
   );
 }
 
 export default App;
-
-
-

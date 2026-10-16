@@ -7,7 +7,7 @@ function CheckAuth({ children }) {
 
   const isAuthenticated = !!token;
 
-  const protectedRoutes = ["/dashboard", "/about", "/contact"];
+  const protectedRoutes = ["/dashboard", "/about"];
   if (
     !isAuthenticated &&
     protectedRoutes.some((path) => location.pathname.startsWith(path))

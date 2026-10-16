@@ -1,37 +1,47 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { FaArrowRight, FaBars, FaXmark } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
-import { FaUser, FaSignInAlt, FaSignOutAlt, FaHome, FaUserPlus } from "react-icons/fa";
 import "../styles/Navbar.css";
+import "../styles/NavbarEditorial.css";
 
 function Navbar() {
   const { token, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const onDashboard = location.pathname === "/dashboard";
+  const profileMatch = location.pathname.match(/^\/([^/]+)\/?$/);
+  const reservedPaths = new Set(["login", "signup", "dashboard", "about"]);
+  const profilePath = profileMatch && !reservedPaths.has(profileMatch[1].toLowerCase()) ? `/${profileMatch[1]}` : null;
+
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
+  if (profilePath || location.pathname === "/login" || location.pathname === "/signup") return null;
+
+  const signOut = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav className="navbar">
-      <div className="navbar-left">
-        <FaHome className="navbar-icon" />
-        <Link to="/" className="navbar-title">LinkHub</Link>
+      <Link to="/" className="navbar-brand"><span className="brand-mark"><img src="/linkhub-mark.svg" alt="" /></span><span>linkhub<span className="brand-period">.</span></span></Link>
+      <div className={`navbar-links ${menuOpen ? "is-open" : ""}`} id="primary-navigation">
+        {onDashboard && token ? <>
+          <Link to="/dashboard" className={onDashboard ? "active" : ""} onClick={() => setMenuOpen(false)}>Studio</Link>
+          <Link to="/about" className={location.pathname === "/about" ? "active" : ""} onClick={() => setMenuOpen(false)}>About</Link>
+        </> : <>
+          <Link to="/#features" onClick={() => setMenuOpen(false)}>Why Linkhub</Link>
+          <Link to="/about" className={location.pathname === "/about" ? "active" : ""} onClick={() => setMenuOpen(false)}>About</Link>
+        </>}
       </div>
-
-      <div className="navbar-links">
-        <Link to="/" className={location.pathname === "/" ? "active" : ""}>Home</Link>
-        { token && <Link to="/contact" className={location.pathname=== "/contact" ? "active" : ""}> Contact </Link>}
-{token && <Link to="/about" className={location.pathname === "/about" ? "active " :""}>About Us</Link>
-}  
-        {token && <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active" : ""}>Dashboard</Link>}
-    </div>
-
+      <button type="button" className="nav-menu-toggle" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen} aria-controls="primary-navigation" onClick={() => setMenuOpen((open) => !open)}><span aria-hidden="true">{menuOpen ? <FaXmark /> : <FaBars />}</span></button>
       <div className="navbar-right">
-        {!token ? (
-          <>
-            <Link to="/login"><FaSignInAlt /> Login</Link>
-            <Link to="/signup"><FaUserPlus /> Signup</Link>
-          </>
-        ) : (
-          <button className="logout-btn" onClick={logout}><FaSignOutAlt /> Logout</button>
-        )}
+        {onDashboard && token ? <button className="nav-logout" onClick={signOut}>Sign out</button> : !token ? <>
+          <Link className="nav-login" to="/login">Log in</Link>
+          <Link className="nav-signup" to="/signup">Get started <FaArrowRight /></Link>
+        </> : null}
       </div>
     </nav>
   );
