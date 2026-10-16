@@ -82,7 +82,11 @@ const configuredClientOrigin = (() => {
   }
 })();
 
-const allowedOrigins = ["http://localhost:5173", configuredClientOrigin].filter(Boolean);
+const allowedOrigins = [
+  "http://localhost:5173",
+  configuredClientOrigin,
+  "https://linkinbio-mern-3k18dtw1d-kavinayas-projects.vercel.app",
+].filter(Boolean);
 
 app.use(
   cors({
