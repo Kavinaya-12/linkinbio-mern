@@ -6,6 +6,7 @@ const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const { getMongoErrorDiagnostics } = require("./utils/mongoDiagnostics");
+const { createCorsOptions } = require("./utils/corsOptions");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const authRoutes = require("./routes/auth");
@@ -25,8 +26,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const MONGO_URI = process.env.MONGO_URI;
-
-const CLIENT_URL = process.env.CLIENT_URL;
 
 if (!MONGO_URI) {
   console.error("❌ MONGO_URI is missing");
@@ -73,51 +72,7 @@ app.use(
    CORS
 =========================== */
 
-const configuredClientOrigin = (() => {
-  if (!CLIENT_URL) return null;
-  try {
-    return new URL(CLIENT_URL).origin;
-  } catch {
-    return null;
-  }
-})();
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  configuredClientOrigin,
-  "https://linkinbio-mern-3k18dtw1d-kavinayas-projects.vercel.app",
-].filter(Boolean);
-
-app.use(
-  cors({
-    origin(origin, callback) {
-
-      // Allow Postman/mobile apps
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-
-    credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-    ],
-  })
-);
+app.use(cors(createCorsOptions()));
 
 /* ===========================
    Rate Limiter
