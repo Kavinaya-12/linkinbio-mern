@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
-import request from "../lib/api";
+import { login as loginRequest } from "../lib/api";
 import FormCard from "../components/FormCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { isValidEmail } from "../lib/validators";
@@ -35,7 +35,7 @@ function Login() {
     setMessage("");
     setIsSubmitting(true);
     try {
-      const data = await request("/api/auth/login", { method: "POST", body: formData });
+      const data = await loginRequest(formData);
       login(data.token, data.user);
       const requestedPath = location.state?.from;
       const path = typeof requestedPath?.pathname === "string" && requestedPath.pathname.startsWith("/") && !requestedPath.pathname.startsWith("//")

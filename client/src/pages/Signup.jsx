@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
-import request from "../lib/api";
+import { signup as signupRequest } from "../lib/api";
 import FormCard from "../components/FormCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getPasswordStrength, isValidEmail, isValidPassword, isValidUsername } from "../lib/validators";
@@ -43,10 +43,7 @@ function Signup() {
     setMessage("");
     setIsSubmitting(true);
     try {
-      const data = await request("/api/auth/signup", {
-        method: "POST",
-        body: { username: formData.username, email: formData.email, password: formData.password },
-      });
+      const data = await signupRequest({ username: formData.username, email: formData.email, password: formData.password });
       login(data.token, data.user);
       navigate("/dashboard", { replace: true });
     } catch (error) {

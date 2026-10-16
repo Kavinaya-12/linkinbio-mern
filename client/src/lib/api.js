@@ -1,4 +1,8 @@
-export const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+const DEFAULT_API_URL = import.meta.env.DEV
+  ? "http://localhost:5000"
+  : "https://linkinbio-backend-tl6v.onrender.com";
+
+export const API_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, "");
 const REQUEST_TIMEOUT_MS = 12_000;
 const UNAUTHORIZED_EVENT = "linkhub:unauthorized";
 
